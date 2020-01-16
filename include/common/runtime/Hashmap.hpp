@@ -213,10 +213,12 @@ void inline Hashmap::clear() {
    }
 }
 
-template <typename K, typename V, typename H, bool useTags = true>
+template <typename K, typename V, typename H, bool useTags = false>
 class Hashmapx : public Hashmap {
    H hasher;
    size_t nrEntries = 0;
+
+   static_assert(useTags == false, "Not compatible with VOILA");
 
  public:
    using key_type = K;
@@ -393,10 +395,12 @@ Hashmap::hash_t Hashmapx<K, V, H, useTags>::hash(const K& key, hash_t seed) {
    return hasher(key, seed);
 }
 
-template <typename K, typename H, bool useTags = true>
+template <typename K, typename H, bool useTags = false>
 class Hashset : public Hashmap {
    H hasher;
    static const uint64_t seed = 902850234;
+
+   static_assert(useTags == false, "Not compatible with VOILA");
 
  public:
    struct Entry {
