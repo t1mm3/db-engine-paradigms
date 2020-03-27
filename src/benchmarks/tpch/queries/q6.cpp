@@ -19,7 +19,7 @@ NOVECTORIZE Relation q6_hyper(Database& db, size_t /*nrThreads*/) {
    auto c2 = types::Date::castString("1995-01-01");
    auto c3 = types::Numeric<12, 2>::castString("0.05");
    auto c4 = types::Numeric<12, 2>::castString("0.07");
-   auto c5 = types::Integer(24);
+   auto c5 = types::Numeric<15, 2>::castString("24").value;
 
    // --- aggregates
    types::Numeric<12, 4> revenue = 0;
