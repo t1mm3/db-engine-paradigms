@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
 if(UNIX AND NOT APPLE)
   set(LINUX true)
@@ -25,11 +25,21 @@ OPTION(HARDWARE_BENCHMARKS OFF)
 OPTION(INTERPRET_SEPARATE OFF)
 OPTION(HASH_SIZE_32 OFF)
 
+project(exec_engine_comparison)
 
+
+set(RELEASE_FLAGS "-mtune=native")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "ppc64")
+  # https://github.com/mfem/mfem/issues/216
+  # march=native not supported on PPC
+  set(RELEASE_FLAGS "${RELEASE_FLAGS} -mcpu=native")
+else()
+  set(RELEASE_FLAGS "${RELEASE_FLAGS} -march=native")
+endif()
 
 # Compiler flags for the different targets
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mtune=native -std=c++14 -fPIC -Wall -Wextra -Wno-psabi -fno-omit-frame-pointer -Wno-unknown-pragmas -Wno-deprecated-copy")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall -Wextra -fno-omit-frame-pointer -march=native -fdiagnostics-color ")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RELEASE_FLAGS} -std=c++14 -fPIC -Wall -Wextra -Wno-psabi -fno-omit-frame-pointer -Wno-unknown-pragmas -Wno-deprecated-copy")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -Wall -Wextra -fno-omit-frame-pointer ${RELEASE_FLAGS} -fdiagnostics-color ")
 
 
 if(LINUX)
@@ -103,7 +113,6 @@ endif()
 # Now simply link your own targets against gtest, gmock,
 # etc. as appropriate
 
-project(exec_engine_comparison)
 
 IF(DATADIR)
     message(STATUS "setting datadir to user defined")
